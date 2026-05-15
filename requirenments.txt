@@ -1,0 +1,17 @@
+pymongo
+groq
+langchain
+langchain-community
+langchain-groq
+langgraph
+pypdf
+PyMuPDF
+sentence-transformers
+tiktoken
+transformers
+PyYAML
+pandas
+python-dotenv
+pydantic
+fastapi
+uvicorn[standard]
