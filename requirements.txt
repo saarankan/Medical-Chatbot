@@ -7,7 +7,6 @@ langgraph
 pypdf
 PyMuPDF
 sentence-transformers
-tiktoken
 transformers
 PyYAML
 pandas
@@ -15,3 +14,4 @@ python-dotenv
 pydantic
 fastapi
 uvicorn[standard]
+motor
