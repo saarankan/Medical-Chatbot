@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!--
+    viewport — makes the page fit correctly on mobile phones.
+    Without this, phones zoom out and show a tiny desktop layout.
+  -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clinic Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!--
+    DISCLAIMER BANNER
+    Always visible at the top.
+    Legally important — makes clear this is
+    an information tool, not medical diagnosis.
+  -->
+  <div class="disclaimer" role="alert">
+    ⚕️ This assistant provides general clinic information only.
+    For medical emergencies call <strong>119</strong>.
+    This chatbot cannot replace a doctor's advice.
+  </div>
+
+
+  <!--
+    CHAT WRAPPER
+    Centers the chat box on wide screens.
+    On mobile it fills the full screen.
+  -->
+  <main class="chat-wrapper">
+    <div class="chat-container">
+
+
+      <!--
+        HEADER
+        Clinic name + animated online dot.
+        Patients feel more comfortable seeing
+        a name rather than a generic "chatbot".
+      -->
+      <header class="chat-header">
+        <div class="header-avatar" aria-hidden="true">🏥</div>
+        <div class="header-info">
+          <div class="header-name">Clinic Assistant</div>
+          <div class="header-status">
+            <span class="status-dot" aria-hidden="true"></span>
+            Online — here to help
+          </div>
+        </div>
+      </header>
+
+
+      <!--
+        MESSAGE AREA
+        Chat bubbles appear here.
+        role="log" + aria-live="polite" — screen readers
+        announce new messages as they arrive.
+        The greeting bubble is hardcoded so it
+        shows instantly without waiting for JS.
+      -->
+      <section
+        class="messages"
+        id="messages"
+        role="log"
+        aria-live="polite"
+        aria-label="Chat messages"
+      >
+        <div class="bubble assistant" role="article">
+          <div class="bubble-text">
+            Hello! 👋 I'm the clinic assistant. I can help you with
+            clinic hours, our doctors, services, and general information.
+            How can I help you today?
+          </div>
+        </div>
+      </section>
+
+
+      <!--
+        QUICK ACTION BUTTONS
+        Tap one to instantly send a common question.
+        Very helpful for elderly patients who may
+        not know what to type.
+      -->
+      <div class="quick-actions" aria-label="Quick questions">
+        <p class="quick-label">Quick questions:</p>
+        <div class="quick-buttons">
+
+          <button class="quick-btn"
+            onclick="quickSend('What are the clinic hours?')">
+            🕐 Clinic hours
+          </button>
+
+          <button class="quick-btn"
+            onclick="quickSend('Who are the doctors at this clinic?')">
+            👨‍⚕️ Our doctors
+          </button>
+
+          <button class="quick-btn"
+            onclick="quickSend('What services does the clinic offer?')">
+            💉 Services
+          </button>
+
+          <button class="quick-btn"
+            onclick="quickSend('How do I contact the clinic?')">
+            📞 Contact us
+          </button>
+
+        </div>
+      </div>
+
+
+      <!--
+        INPUT AREA
+        Text input + Send button.
+        Patient types here and presses Enter
+        or clicks Send.
+      -->
+      <footer class="input-area">
+        <div class="input-row">
+
+          <!--
+            sr-only label — invisible to sighted users
+            but screen readers read it aloud so blind
+            users know what the input field is for.
+          -->
+          <label for="user-input" class="sr-only">Type your message</label>
+
+          <input
+            type="text"
+            id="user-input"
+            class="text-input"
+            placeholder="Type your question here..."
+            autocomplete="off"
+            autocorrect="off"
+            spellcheck="true"
+            maxlength="500"
+          />
+
+          <button
+            class="send-btn"
+            id="send-btn"
+            onclick="sendMsg()"
+            aria-label="Send message"
+          >
+            Send
+          </button>
+
+        </div>
+
+        <!-- shows characters remaining when close to the 500 limit -->
+        <div class="char-count" id="char-count" aria-live="polite"></div>
+
+      </footer>
+
+
+    </div>
+  </main>
+
+
+  <!-- load app.js last — after HTML is fully parsed -->
+  <script src="app.js"></script>
+
+</body>
+</html>

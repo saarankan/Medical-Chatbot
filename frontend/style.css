@@ -1,0 +1,431 @@
+/* ─────────────────────────────────────────────
+   style.css — Clinic Chatbot
+
+   Design decisions:
+   - 18px base font — large, readable for elderly patients
+   - High contrast — near-black text on white/light backgrounds
+   - Clear left/right bubbles — no confusion about who said what
+   - Simple layout — nothing surprising or hard to understand
+   - Fully responsive — works on phones and desktop
+   ───────────────────────────────────────────── */
+
+
+/* ─────────────────────────────────────────────
+   CSS VARIABLES
+   All colours and sizes defined once here.
+   Change a value here and it updates everywhere.
+   ───────────────────────────────────────────── */
+
+:root {
+  --colour-bg:            #F4F6F9;
+  --colour-white:         #FFFFFF;
+  --colour-text:          #1A1A2E;       /* near-black — high contrast */
+  --colour-text-muted:    #555770;
+  --colour-border:        #D8DCE8;
+
+  --colour-bot-bg:        #FFFFFF;       /* assistant bubbles — white */
+  --colour-bot-txt:       #1A1A2E;
+  --colour-user-bg:       #1A56DB;       /* user bubbles — clinic blue */
+  --colour-user-txt:      #FFFFFF;
+
+  --colour-disclaimer-bg: #FFF8E1;       /* soft yellow warning */
+  --colour-disclaimer-txt:#5D4037;
+  --colour-disclaimer-bdr:#FFE082;
+
+  --colour-quick-bg:      #EEF2FF;
+  --colour-quick-hover:   #C7D2FE;
+
+  --colour-send-bg:       #1A56DB;
+  --colour-send-hover:    #1648C0;
+
+  --colour-online:        #22C55E;       /* green status dot */
+
+  --font-size:            18px;          /* large — good for elderly */
+  --font-size-sm:         15px;
+  --font-size-xs:         13px;
+  --radius:               12px;
+  --radius-sm:            8px;
+  --shadow:               0 2px 12px rgba(0,0,0,0.08);
+  --max-width:            700px;
+}
+
+
+/* ─────────────────────────────────────────────
+   RESET
+   Remove browser default margin/padding.
+   ───────────────────────────────────────────── */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  background: var(--colour-bg);
+  color: var(--colour-text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+
+/* ─────────────────────────────────────────────
+   SCREEN READER ONLY
+   Invisible to sighted users.
+   Screen readers still read it aloud.
+   Used on the <label> for the input field.
+   ───────────────────────────────────────────── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
+}
+
+
+/* ─────────────────────────────────────────────
+   DISCLAIMER BANNER
+   Sticky yellow bar at the top.
+   High visibility — patients must see this.
+   ───────────────────────────────────────────── */
+
+.disclaimer {
+  background: var(--colour-disclaimer-bg);
+  color: var(--colour-disclaimer-txt);
+  border-bottom: 1px solid var(--colour-disclaimer-bdr);
+  padding: 10px 20px;
+  font-size: var(--font-size-sm);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.disclaimer strong {
+  font-weight: 700;
+}
+
+
+/* ─────────────────────────────────────────────
+   CHAT WRAPPER + CONTAINER
+   Centers the chat on wide screens.
+   On mobile — fills full screen.
+   ───────────────────────────────────────────── */
+
+.chat-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 20px 16px;
+}
+
+.chat-container {
+  width: 100%;
+  max-width: var(--max-width);
+  background: var(--colour-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 110px);
+  min-height: 500px;
+  overflow: hidden;
+}
+
+
+/* ─────────────────────────────────────────────
+   HEADER
+   ───────────────────────────────────────────── */
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--colour-border);
+  flex-shrink: 0;
+}
+
+.header-avatar {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.header-name {
+  font-size: var(--font-size);
+  font-weight: 700;
+  color: var(--colour-text);
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--font-size-xs);
+  color: var(--colour-text-muted);
+  margin-top: 3px;
+}
+
+/* pulsing green dot — shows bot is alive */
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--colour-online);
+  display: inline-block;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.15); }
+}
+
+
+/* ─────────────────────────────────────────────
+   MESSAGE AREA
+   Grows to fill all available space.
+   Scrolls when messages overflow.
+   ───────────────────────────────────────────── */
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+}
+
+.messages::-webkit-scrollbar       { width: 5px; }
+.messages::-webkit-scrollbar-track { background: transparent; }
+.messages::-webkit-scrollbar-thumb { background: var(--colour-border); border-radius: 10px; }
+
+
+/* ─────────────────────────────────────────────
+   CHAT BUBBLES
+
+   .bubble         — shared wrapper (sets max-width + alignment)
+   .bubble.user    — right side, blue
+   .bubble.assistant — left side, white
+   .bubble-text    — the actual visible box
+   ───────────────────────────────────────────── */
+
+.bubble {
+  display: flex;
+  max-width: 80%;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* assistant — left */
+.bubble.assistant {
+  align-self: flex-start;
+}
+
+.bubble.assistant .bubble-text {
+  background: var(--colour-bot-bg);
+  color: var(--colour-bot-txt);
+  border: 1px solid var(--colour-border);
+  border-bottom-left-radius: 3px;    /* tail pointing left */
+}
+
+/* user — right */
+.bubble.user {
+  align-self: flex-end;
+}
+
+.bubble.user .bubble-text {
+  background: var(--colour-user-bg);
+  color: var(--colour-user-txt);
+  border-bottom-right-radius: 3px;   /* tail pointing right */
+}
+
+/* shared bubble text box */
+.bubble-text {
+  padding: 12px 16px;
+  border-radius: var(--radius);
+  font-size: var(--font-size);
+  line-height: 1.6;
+  word-wrap: break-word;
+  white-space: pre-wrap;             /* preserves line breaks from the API */
+}
+
+
+/* ─────────────────────────────────────────────
+   TYPING INDICATOR
+   Three bouncing dots while bot is thinking.
+   Added and removed by app.js.
+   ───────────────────────────────────────────── */
+
+.typing-dots {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 2px 0;
+}
+
+.typing-dots span {
+  width: 8px;
+  height: 8px;
+  background: var(--colour-border);
+  border-radius: 50%;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+.typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes bounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%           { transform: translateY(-6px); }
+}
+
+
+/* ─────────────────────────────────────────────
+   QUICK ACTION BUTTONS
+   ───────────────────────────────────────────── */
+
+.quick-actions {
+  padding: 12px 16px 8px;
+  border-top: 1px solid var(--colour-border);
+  flex-shrink: 0;
+}
+
+.quick-label {
+  font-size: var(--font-size-xs);
+  color: var(--colour-text-muted);
+  margin-bottom: 8px;
+}
+
+.quick-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.quick-btn {
+  background: var(--colour-quick-bg);
+  color: var(--colour-text);
+  border: 1px solid var(--colour-border);
+  border-radius: 20px;
+  padding: 8px 14px;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  font-family: inherit;
+}
+
+.quick-btn:hover  { background: var(--colour-quick-hover); }
+.quick-btn:active { transform: scale(0.97); }
+.quick-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+
+/* ─────────────────────────────────────────────
+   INPUT AREA
+   Fixed at the bottom of the chat box.
+   ───────────────────────────────────────────── */
+
+.input-area {
+  padding: 12px 16px 16px;
+  border-top: 1px solid var(--colour-border);
+  flex-shrink: 0;
+}
+
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.text-input {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: var(--font-size);
+  border: 1.5px solid var(--colour-border);
+  border-radius: var(--radius-sm);
+  color: var(--colour-text);
+  background: var(--colour-white);
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s;
+}
+
+.text-input:focus       { border-color: var(--colour-send-bg); }
+.text-input::placeholder{ color: #9CA3AF; }
+.text-input:disabled    { background: #F9FAFB; cursor: not-allowed; }
+
+.send-btn {
+  padding: 12px 22px;
+  background: var(--colour-send-bg);
+  color: #FFFFFF;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size);
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, transform 0.1s;
+  flex-shrink: 0;
+}
+
+.send-btn:hover   { background: var(--colour-send-hover); }
+.send-btn:active  { transform: scale(0.97); }
+.send-btn:disabled{ opacity: 0.6; cursor: not-allowed; }
+
+.char-count {
+  font-size: var(--font-size-xs);
+  color: var(--colour-text-muted);
+  text-align: right;
+  margin-top: 5px;
+  min-height: 16px;
+}
+
+.char-count.warning { color: #DC2626; }
+
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE — MOBILE
+   Phones narrower than 480px:
+   - Remove outer padding
+   - Chat fills the full screen
+   - Slightly smaller fonts
+   ───────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+  :root {
+    --font-size:    17px;
+    --font-size-sm: 14px;
+  }
+
+  .chat-wrapper {
+    padding: 0;
+  }
+
+  .chat-container {
+    border-radius: 0;
+    height: 100vh;
+    box-shadow: none;
+  }
+
+  .bubble { max-width: 90%; }
+
+  .quick-btn { font-size: var(--font-size-xs); padding: 7px 11px; }
+}

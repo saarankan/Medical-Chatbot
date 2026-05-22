@@ -7,33 +7,6 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from config import MONGODB_URI, DB_NAME, DOCS_COLLECTION
 
 
-# ─────────────────────────────────────────────
-#  HOW THIS FILE WORKS — READ FIRST
-#
-#  You run this file ONCE before starting the chatbot.
-#  It does 4 things in order:
-#
-#  1. READ    — opens every PDF in your docs/ folder
-#  2. CHUNK   — cuts the text into small 200-word pieces
-#  3. EMBED   — converts each piece into 384 numbers
-#               that represent its meaning
-#  4. STORE   — saves everything into MongoDB
-#
-#  After this runs, your chatbot can search those
-#  chunks when a patient asks a question.
-#
-#  Run it again any time you add new PDF files.
-#  It clears old data first so you never get duplicates.
-# ─────────────────────────────────────────────
-
-
-# ─────────────────────────────────────────────
-#  SETUP
-#  Connect to MongoDB and load the embedding model.
-#  Same model as database.py — this is important.
-#  If you change the model here, change it there too.
-# ─────────────────────────────────────────────
-
 client   = AsyncIOMotorClient(MONGODB_URI)
 db       = client[DB_NAME]
 docs_col = db[DOCS_COLLECTION]
@@ -43,17 +16,7 @@ embedder = SentenceTransformer("all-MiniLM-L6-v2")
 # where your PDF files live
 DOCS_FOLDER = os.path.join(os.path.dirname(__file__), "..", "docs")
 
-
-# ─────────────────────────────────────────────
 #  STEP 1 — READ PDF
-#  PyMuPDF (fitz) opens the PDF and extracts
-#  the text from every page.
-#
-#  Returns a list of (page_number, text) pairs.
-#  Example:
-#    [(1, "Dr. Silva is available on..."),
-#     (2, "The clinic opens at 8am...")]
-# ─────────────────────────────────────────────
 
 def read_pdf(pdf_path: str) -> list:
     """
@@ -88,26 +51,8 @@ def read_pdf(pdf_path: str) -> list:
     return pages
 
 
-# ─────────────────────────────────────────────
 #  STEP 2 — CHUNK TEXT
-#  We cannot send a whole PDF to the AI at once —
-#  it is too long and expensive.
-#
-#  Instead we cut it into small overlapping pieces.
-#
-#  Example with size=10 words, overlap=3 words:
-#    Text: "the cat sat on the mat in the sun today"
-#    Chunk 1: "the cat sat on the mat in"       (words 0-9)
-#    Chunk 2: "in the sun today"                (words 7-10)
-#             ^^^
-#             overlap — repeated words help keep context
-#             across chunk boundaries
-#
-#  Why overlap? If an important sentence happens
-#  to be split between chunk 1 and chunk 2,
-#  the overlap means it appears (at least partly)
-#  in both chunks so it is never fully lost.
-# ─────────────────────────────────────────────
+
 
 def chunk_text(text: str, chunk_size: int = 200, overlap: int = 40) -> list:
     """
@@ -141,22 +86,8 @@ def chunk_text(text: str, chunk_size: int = 200, overlap: int = 40) -> list:
     return chunks
 
 
-# ─────────────────────────────────────────────
 #  STEP 3 — EMBED TEXT
-#  The embedding model reads a chunk of text
-#  and converts it into 384 numbers.
-#
-#  These numbers capture the MEANING of the text,
-#  not just the words. So:
-#    "clinic is open Monday"
-#    "we are available on Mondays"
-#  ...will have similar numbers even though
-#  the words are different.
-#
-#  This is what makes semantic search work —
-#  a patient can ask in any wording and still
-#  find the right answer.
-# ─────────────────────────────────────────────
+
 
 def embed(text: str) -> list:
     """
@@ -172,18 +103,8 @@ def embed(text: str) -> list:
     return vector.tolist()    # convert numpy array → plain Python list for MongoDB
 
 
-# ─────────────────────────────────────────────
 #  STEP 4 — STORE IN MONGODB
-#  Each chunk is stored as one document in MongoDB.
-#  The document contains:
-#    - text      : the actual words (for the AI to read)
-#    - embedding : the 384 numbers (for searching)
-#    - source    : which PDF file it came from
-#    - page      : which page of that PDF
-#
-#  We batch insert for speed — one insert_many()
-#  is much faster than many insert_one() calls.
-# ─────────────────────────────────────────────
+
 
 async def store_chunks(chunks_data: list) -> int:
     """
@@ -202,12 +123,6 @@ async def store_chunks(chunks_data: list) -> int:
     result = await docs_col.insert_many(chunks_data)
     return len(result.inserted_ids)
 
-
-# ─────────────────────────────────────────────
-#  MAIN FUNCTION — ties all 4 steps together
-#  This is what actually runs when you call
-#  python ingest.py from the terminal
-# ─────────────────────────────────────────────
 
 async def ingest_all():
     """
@@ -291,13 +206,6 @@ async def ingest_all():
     print("  on the field 'embedding' with dimension 384")
     print("  Then you can run rag.py\n")
 
-
-# ─────────────────────────────────────────────
-#  RUN
-#  asyncio.run() is needed because our functions
-#  are async (they use await for MongoDB calls).
-#  Think of it as the "starter" for async code.
-# ─────────────────────────────────────────────
 
 if __name__ == "__main__":
     asyncio.run(ingest_all())

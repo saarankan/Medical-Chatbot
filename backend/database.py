@@ -4,14 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from sentence_transformers import SentenceTransformer
 from config import MONGODB_URI, DB_NAME, DOCS_COLLECTION, HISTORY_COLLECTION
 
-
-# ─────────────────────────────────────────────
 #  1. CONNECTION
-#  motor is the async version of pymongo.
-#  We create one client and reuse it everywhere.
-#  Think of it like opening one door to MongoDB
-#  and keeping it open the whole time the app runs.
-# ─────────────────────────────────────────────
 
 client = AsyncIOMotorClient(MONGODB_URI)
 db     = client[DB_NAME]
@@ -19,25 +12,12 @@ db     = client[DB_NAME]
 docs_col = db[DOCS_COLLECTION]     # stores: clinic PDF chunks + embeddings
 hist_col = db[HISTORY_COLLECTION]  # stores: patient chat messages
 
-
-# ─────────────────────────────────────────────
 #  2. EMBEDDING MODEL
-#  This converts text → 384 numbers (a vector).
-#  We use the same model in both ingest.py and
-#  here so the numbers are in the same "language".
-#  If you used model A to store, use model A to search.
-# ─────────────────────────────────────────────
 
 embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
 
-# ─────────────────────────────────────────────
 #  3. CONNECTION TEST
-#  Call this once when the app starts.
-#  If it fails → something is wrong with your
-#  MONGODB_URI or your internet connection.
-#  Fix it before writing anything else.
-# ─────────────────────────────────────────────
 
 async def test_connection():
     """
@@ -62,20 +42,7 @@ async def test_connection():
         raise SystemExit(1)   # stop the app — do not proceed if DB is down
 
 
-# ─────────────────────────────────────────────
 #  4. VECTOR SEARCH  (used by rag.py)
-#  Steps:
-#    a) embed the patient's question → 384 numbers
-#    b) ask MongoDB to find the 3 clinic chunks
-#       whose embeddings are closest in meaning
-#    c) join those chunks into one block of text
-#       that rag.py will give to Groq as context
-#
-#  This only works AFTER you:
-#    - ran ingest.py   (chunks are in MongoDB)
-#    - created the Atlas Vector Search index
-#      named "vector_index" on the embedding field
-# ─────────────────────────────────────────────
 
 async def retrieve_context(question: str, top_k: int = 3) -> str:
     """
@@ -137,15 +104,7 @@ async def retrieve_context(question: str, top_k: int = 3) -> str:
     return "\n\n".join(chunks)
 
 
-# ─────────────────────────────────────────────
 #  5. CHAT HISTORY  (used by main.py and rag.py)
-#
-#  Every message the patient sends and every
-#  response the bot gives is stored here.
-#  session_id ties messages to one conversation.
-#  A patient keeps the same session_id until
-#  they close the browser (stored in localStorage).
-# ─────────────────────────────────────────────
 
 async def save_message(session_id: str, role: str, content: str) -> None:
     """
@@ -192,13 +151,7 @@ async def get_history(session_id: str, limit: int = 6) -> list:
     return [{"role": m["role"], "content": m["content"]} for m in messages]
 
 
-# ─────────────────────────────────────────────
 #  6. QUICK LOCAL TEST
-#  Run this file directly:  python database.py
-#  It will test the connection and print the result.
-#  You should see "Connected successfully" before
-#  moving on to write ingest.py or rag.py.
-# ─────────────────────────────────────────────
 
 if __name__ == "__main__":
     async def run_test():

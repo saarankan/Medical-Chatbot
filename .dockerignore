@@ -1,6 +1,35 @@
-.venv
-__pycache__
-*.pyc
+# ─────────────────────────────────────────────
+#  .dockerignore
+#
+#  This tells Docker what NOT to copy into
+#  the container when it runs COPY . .
+#
+#  Works exactly like .gitignore but for Docker.
+#  Keeps the image small and your secrets safe.
+# ─────────────────────────────────────────────
+
+# secrets — NEVER go inside Docker image
 .env
-logs/
-data/processed
+
+# Python cache — not needed, wastes space
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# virtual environment — Docker installs its own
+.venv/
+venv/
+env/
+
+# development tools
+.git/
+.gitignore
+*.md
+
+# test files
+*.test.py
+
+# OS files
+.DS_Store
+Thumbs.db
