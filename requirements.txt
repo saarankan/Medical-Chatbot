@@ -15,3 +15,5 @@ pydantic
 fastapi
 uvicorn[standard]
 motor
+langsmith
+langchain-core
