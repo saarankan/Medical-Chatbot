@@ -171,6 +171,8 @@ LANGCHAIN_ENDPOINT=https://api.smith.langchain.com
 
 Drop clinic PDF files into the `docs/` folder:
 
+```
+docs/
 
 ```
 
@@ -182,19 +184,6 @@ Reads all PDFs, chunks the text, embeds each chunk, and stores everything in Mon
 uv run ingest.py
 ```
 
-Expected output:
-
-```
-Found 4 PDF file(s)
-Cleared 0 old chunks from MongoDB
-Processing: services.pdf → Stored 12 chunks
-Processing: doctors.pdf  → Stored 8 chunks
-Processing: faq.pdf      → Stored 15 chunks
-Processing: hours.pdf    → Stored 5 chunks
-
-Ingestion complete — Total chunks stored: 40
-Next step: create the Vector Search index in Atlas
-```
 
 ### 6. Create MongoDB Atlas Vector Search index
 
