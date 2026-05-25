@@ -409,6 +409,23 @@ body {
    - Slightly smaller fonts
    ───────────────────────────────────────────── */
 
+   .new-chat-btn {
+  font-size: var(--font-size-xs);
+  padding: 6px 12px;
+  border: 1px solid var(--colour-border);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--colour-text-muted);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+  margin-left: auto;
+}
+
+.new-chat-btn:hover {
+  background: var(--colour-bg);
+}
+
 @media (max-width: 480px) {
   :root {
     --font-size:    17px;

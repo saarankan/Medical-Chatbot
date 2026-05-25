@@ -14,15 +14,23 @@ const charCountEl = document.getElementById("char-count");
 const quickBtns   = document.querySelectorAll(".quick-btn");
 
 
-
-
 function getSessionId() {
-  return localStorage.getItem(SESSION_KEY);  // null if not yet set
+    return localStorage.getItem(SESSION_KEY);
 }
 
 function saveSessionId(id) {
-  localStorage.setItem(SESSION_KEY, id);
+    localStorage.setItem(SESSION_KEY, id);
 }
+
+
+function getSessionId() {
+    return sessionStorage.getItem(SESSION_KEY);
+}
+
+function saveSessionId(id) {
+    sessionStorage.setItem(SESSION_KEY, id);
+}
+
 
 
 function addBubble(role, text) {
@@ -103,6 +111,25 @@ inputEl.addEventListener("keydown", (e) => {
 function quickSend(text) {
   inputEl.value = text;
   sendMsg();
+}
+
+function newChat() {
+  // clear the session so next message gets a new UUID
+  sessionStorage.removeItem(SESSION_KEY);
+
+  // clear the message area — keep only the greeting
+  messagesEl.innerHTML = `
+    <div class="bubble assistant" role="article">
+      <div class="bubble-text">
+        Hello! 👋 I'm the clinic assistant. I can help you with
+        clinic hours, our doctors, services, and general information.
+        How can I help you today?
+      </div>
+    </div>
+  `;
+
+  // focus the input
+  inputEl.focus();
 }
 
 
