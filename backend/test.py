@@ -71,10 +71,10 @@ TEST_CASES = [
     {"question": "I want to book an appointment",
      "expected": "doctor", "category": "BOOKING"},
 
-    {"question": "Book me with Dr. Silva",
+    {"question": "Book me with Dr. Mohan",
      "expected": "date", "category": "BOOKING"},
 
-    {"question": "Is Dr. Silva free tomorrow?",
+    {"question": "Is Dr. Mohan free tomorrow?",
      "expected": "date", "category": "BOOKING"},
 
     {"question": "Check availability for Dr. Kumar on Monday",
@@ -96,9 +96,9 @@ TEST_CASES = [
      "expected": "ref", "category": "BOOKING"},
 
     {"question": "Book with Dr. Perera",        # unknown doctor
-     "expected": "silva", "category": "BOOKING"},
+     "expected": "mohan", "category": "BOOKING"},
 
-    {"question": "Book for next Monday at 10am with Dr. Silva",
+    {"question": "Book for next Monday at 10am with Dr. Mohan",
      "expected": "name", "category": "BOOKING"},
 
     {"question": "I need an appointment urgently",

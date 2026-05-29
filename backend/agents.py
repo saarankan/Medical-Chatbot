@@ -11,7 +11,7 @@ from booking import (
     list_appointments,
 )
 from database import save_message, get_history
-from config import GROQ_API_KEY
+from config import GROQ_API_KEY, MODEL
 
 
 # ─────────────────────────────────────────────
@@ -51,7 +51,7 @@ from config import GROQ_API_KEY
 # ─────────────────────────────────────────────
 
 llm = ChatGroq(
-    model       = "llama-3.3-70b-versatile",
+    model       = MODEL,
     api_key     = GROQ_API_KEY,
     max_tokens  = 20,       # classification only needs a few words
     temperature = 0.0       # 0 = deterministic — always same answer
@@ -229,7 +229,7 @@ async def rag_node(state: AgentState) -> AgentState:
 
 # booking LLM — higher token limit than the classifier
 booking_llm = ChatGroq(
-    model       = "llama-3.3-70b-versatile",
+    model       = MODEL,
     api_key     = GROQ_API_KEY,
     max_tokens  = 512,
     temperature = 0.3

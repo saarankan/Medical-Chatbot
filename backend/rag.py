@@ -2,7 +2,7 @@ import asyncio
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage
 from database import retrieve_context, save_message, get_history
-from config import GROQ_API_KEY
+from config import GROQ_API_KEY, MODEL
 
 
 # ─────────────────────────────────────────────
@@ -33,7 +33,7 @@ from config import GROQ_API_KEY
 # ─────────────────────────────────────────────
 
 llm = ChatGroq(
-    model       = "llama-3.3-70b-versatile",
+    model       = MODEL,
     api_key     = GROQ_API_KEY,
     max_tokens  = 512,
     temperature = 0.3
