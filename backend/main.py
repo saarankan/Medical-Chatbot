@@ -4,12 +4,30 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from database import test_connection
-
-# ── ONE LINE CHANGED from the original main.py ──
-# Before: from rag import ask
-# After:  from agents import run
-# Everything else is identical.
 from agents import run
+
+
+# ── Small talk short-circuit — zero tokens used ──
+SMALL_TALK = {
+    "greetings": ["hi", "hello", "hey", "hii", "helo", "hai",
+                  "good morning", "good afternoon", "good evening"],
+    "thanks":    ["thanks", "thank you", "thank you!", "thanks!", "thx"],
+    "bye":       ["bye", "goodbye", "see you", "good night"]
+}
+
+def get_small_talk_response(message: str) -> str | None:
+    q = message.lower().strip()
+
+    if q in SMALL_TALK["greetings"]:
+        return "Hello! Welcome to our clinic. How can I help you today? You can ask about clinic hours, our doctors, services, or book an appointment."
+
+    if q in SMALL_TALK["thanks"]:
+        return "You're welcome! Is there anything else I can help you with?"
+
+    if q in SMALL_TALK["bye"]:
+        return "Goodbye! Take care and stay healthy."
+
+    return None
 
 
 @asynccontextmanager
@@ -62,11 +80,12 @@ async def chat(request: ChatRequest):
 
     session_id = request.session_id or str(uuid.uuid4())
 
+    # ── Short-circuit small talk — never reaches LangGraph ──
+    small_talk = get_small_talk_response(request.message)
+    if small_talk:
+        return {"response": small_talk, "session_id": session_id}
+
     try:
-        # ── now calls agents.run() instead of rag.ask() ──
-        # agents.run() routes to rag_node or booking_node
-        # depending on the patient's intent.
-        # The response is always a plain string — same as before.
         response = await run(
             message    = request.message.strip(),
             session_id = session_id
