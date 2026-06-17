@@ -3,15 +3,15 @@ from typing import TypedDict, Literal
 from langgraph.graph import StateGraph, END
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage
-from rag import ask as rag_ask
-from booking import (
+from backend.rag import ask as rag_ask
+from backend.booking import (
     check_availability,
     create_appointment,
     cancel_appointment,
     list_appointments,
 )
-from database import save_message, get_history
-from config import GROQ_API_KEY, MODEL
+from backend.database import save_message, get_history
+from backend.config import GROQ_API_KEY, MODEL
 
 
 # ─────────────────────────────────────────────

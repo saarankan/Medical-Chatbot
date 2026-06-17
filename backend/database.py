@@ -2,7 +2,7 @@ import asyncio
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorClient
 from sentence_transformers import SentenceTransformer
-from config import MONGODB_URI, DB_NAME, DOCS_COLLECTION, HISTORY_COLLECTION
+from backend.config import MONGODB_URI, DB_NAME, DOCS_COLLECTION, HISTORY_COLLECTION
 
 #  1. CONNECTION
 

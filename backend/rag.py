@@ -1,8 +1,8 @@
 import asyncio
 from langchain_groq import ChatGroq
 from langchain_core.messages import SystemMessage, HumanMessage
-from database import retrieve_context, save_message, get_history
-from config import GROQ_API_KEY, MODEL
+from backend.database import retrieve_context, save_message, get_history
+from backend.config import GROQ_API_KEY, MODEL
 
 
 # ─────────────────────────────────────────────

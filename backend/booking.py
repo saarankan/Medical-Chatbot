@@ -2,7 +2,7 @@ import asyncio
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorClient
 from bson import ObjectId
-from config import MONGODB_URI, DB_NAME
+from backend.config import MONGODB_URI, DB_NAME
 
 
 # ─────────────────────────────────────────────

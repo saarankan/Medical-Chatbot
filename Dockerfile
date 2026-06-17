@@ -19,9 +19,10 @@ COPY . .
 
 
 # ── STEP 6: Tell Docker which port the app uses ──
-EXPOSE 8000
+EXPOSE 10000
 
 
 # ── STEP 7: The command to start the app ──
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
+#CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "2"]
 #CMD ["sh", "-c", "uv run uvicorn main:app --host 0.0.0.0 --port $PORT"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "10000"]

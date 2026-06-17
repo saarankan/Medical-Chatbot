@@ -4,7 +4,7 @@ import glob
 import fitz                          # PyMuPDF — reads PDF files
 from sentence_transformers import SentenceTransformer
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import MONGODB_URI, DB_NAME, DOCS_COLLECTION
+from backend.config import MONGODB_URI, DB_NAME, DOCS_COLLECTION
 
 
 client   = AsyncIOMotorClient(MONGODB_URI)
