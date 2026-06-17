@@ -3,8 +3,8 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from database import test_connection
-from agents import run
+from backend.database import test_connection
+from backend.agents import run
 
 
 # ── Small talk short-circuit — zero tokens used ──
